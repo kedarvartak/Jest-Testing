@@ -65,21 +65,68 @@ To run the tests, you would typically use a command like `npm test` or `jest` in
 
 Jest has a rich set of "matchers" to help you test different things. Here are some of the most common ones.
 
-### Exact Equality
+### `toBe`: For Exact Equality (and Primitives)
 
-`toBe`: Use this to compare primitive values (like numbers, strings, booleans) or to check that two objects are the same instance.
+The `toBe` matcher is used for strict equality, checking if two values are the exact same. It uses `Object.is` for comparison, which is similar to the `===` operator.
+
+This is best for primitive types like `string`, `number`, or `boolean`.
+
 ```javascript
-expect(sum(1, 2)).toBe(3);
+test('demonstrating toBe with primitives', () => {
+    expect(1 + 1).toBe(2);
+    expect('hello').toBe('hello');
+    expect(true).toBe(true);
+});
 ```
 
-### Object Equality
+When you use `toBe` with objects, it checks for *referential identity*. This means it checks if two variables point to the *exact same object in memory*, not just if they have the same properties.
 
-`toEqual`: Use this to recursively check every field of an object or array.
 ```javascript
-const data = {one: 1};
-data['two'] = 2;
-expect(data).toEqual({one: 1, two: 2});
+test('demonstrating toBe with objects', () => {
+    const user1 = { name: 'John' };
+    const user2 = { name: 'John' };
+    const user3 = user1;
+
+    // This will FAIL because user1 and user2 are different objects in memory.
+    // expect(user1).toBe(user2);
+
+    // This will PASS because user1 and user3 point to the same object.
+    expect(user1).toBe(user3);
+});
 ```
+
+### `toEqual`: For Deep Object & Array Equality
+
+The `toEqual` matcher is used to compare the *values* of two objects or arrays. It recursively checks every field to ensure they are equivalent. This is often called "deep equality".
+
+Use `toEqual` whenever you want to check that two objects or arrays have the same content, regardless of whether they are the same instance.
+
+```javascript
+test('demonstrating toEqual with objects and arrays', () => {
+    const user1 = { name: 'John', address: { city: 'New York' } };
+    const user2 = { name: 'John', address: { city: 'New York' } };
+    
+    // This will PASS because they have the same content.
+    expect(user1).toEqual(user2);
+
+    const list1 = [1, 2, { a: 3 }];
+    const list2 = [1, 2, { a: 3 }];
+
+    // This will PASS as well.
+    expect(list1).toEqual(list2);
+});
+```
+
+### `toBe` vs. `toEqual`: Key Differences and When to Use Which
+
+| Matcher   | Compares With | Use Case                                               | Example                                     |
+| --------- | ------------- | ------------------------------------------------------ | ------------------------------------------- |
+| `toBe`      | `Object.is` (`===`) | Primitives (`number`, `string`, `boolean`) or referential identity. | `expect(2).toBe(2);`                        |
+| `toEqual`   | Deep Equality | Objects and arrays, comparing property values.       | `expect({a: 1}).toEqual({a: 1});` |
+
+**Can they be exchanged?**
+- For primitive values, `toBe` and `toEqual` often behave identically. So, `expect(5).toBe(5)` and `expect(5).toEqual(5)` both pass. However, it's conventional to use `toBe` for primitives to make the intention clear (checking for a simple, direct value).
+- For objects and arrays, **they cannot be used interchangeably**. You almost always want `toEqual` to check if two objects have the same data. Use `toBe` only in the rare case where you need to ensure two variables are referencing the exact same object instance.
 
 ### Truthiness
 
