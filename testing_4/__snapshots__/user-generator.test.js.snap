@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createUser returns a consistent user object structure 1`] = `
+{
+  "age": 25,
+  "createdAt": Any<Date>,
+  "id": Any<Number>,
+  "location": "London",
+  "name": "Bob",
+}
+`;
+
+exports[`createUser returns a user object 1`] = `
+{
+  "age": 30,
+  "createdAt": 2025-07-24T06:50:28.927Z,
+  "id": 274,
+  "location": "New York",
+  "name": "Alice",
+}
+`;
